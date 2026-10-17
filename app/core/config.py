@@ -12,7 +12,7 @@ class Settings(BaseSettings):
     pinecone_api_key: str = ""
     pinecone_index_name: str = "agentic-rag-v1"
     pinecone_namespace: str = "agentic-rag-KB"
-    embedding_model: str = "sentence-transformers/all-MiniLM-L6-v2"
+    embedding_model: str = "all-MiniLM-L6-v2"
     groq_model: str = "qwen/qwen3.8-27b"
     top_k: int = 4
     max_retries: int = 3
