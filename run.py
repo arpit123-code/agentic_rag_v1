@@ -17,8 +17,7 @@
 
 # llm = ChatOpenAI(
 #     model="z-ai/glm-5.3-flash",
-#     base_url="https://integrate.api.nvidia.com/v1",
-#     api_key="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",
+#     base_url="https://integrate.api.nvidia.com/v1"
 #     temperature=0,
     
 #     max_tokens=1024,
@@ -27,10 +26,33 @@
 # response = llm.invoke("What is the capital of France?")
 # print (response.content)
 
-from app.services.ingestion import load_file, chunk_documents
-from pathlib import Path
-from app.rag.vectorstore import add_document
+# from app.services.ingestion import load_file, chunk_documents
+# from pathlib import Path
+# from app.rag.vectorstore import add_document
 
-doc=load_file(Path("data/sample_kb/company_it_handbook.md"))
-chunks=chunk_documents(doc)
-add_document(chunks)
+# doc=load_file(Path("data/sample_kb/company_it_handbook.md"))
+# chunks=chunk_documents(doc)
+# add_document(chunks)
+
+
+# from langchain_ollama import ChatOllama
+
+# llm = ChatOllama(
+#     base_url="https://commands-forest-consulting-badly.trycloudflare.com",
+#     model="qwen3.8-27b-uncensored-mtp",
+#     temperature=0,
+#     num_ctx=65536,  # Matches the 64K context set in the notebook
+# )
+# a=input("Enter your question: ")
+# print("\nResponse: ", end="", flush=True)
+
+# # Stream tokens in real time as they are generated
+# for chunk in llm.stream(a):
+#     print(chunk.content, end="", flush=True)
+
+# print()
+
+import uvicorn
+
+if __name__ == "__main__":
+    uvicorn.run("app.main:app", host="127.0.0.1", port=8000, reload=True)

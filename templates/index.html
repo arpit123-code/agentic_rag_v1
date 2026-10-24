@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Enterprise IT Support | Agentic RAG Copilot</title>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- Marked.js for Markdown responses -->
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <!-- Three.js for 3D WebGL Scene -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <link rel="stylesheet" href="/static/style.css" />
+</head>
+<body>
+  <!-- 3D WebGL Background Canvas -->
+  <canvas id="bg-canvas"></canvas>
+
+  <!-- Ambient Glow Overlays -->
+  <div class="ambient-glow glow-1"></div>
+  <div class="ambient-glow glow-2"></div>
+
+  <!-- Main 3D Perspective Stage -->
+  <div class="stage-container">
+    
+    <!-- Top HUD Navigation Bar -->
+    <header class="hud-header tilt-element" data-tilt-max="2">
+      <div class="brand">
+        <div class="core-orb-indicator" id="orb-indicator"></div>
+        <div>
+          <h1>NEXUS <span class="badge-version">AGENTIC RAG v1</span></h1>
+          <p class="subtitle">Enterprise IT Support & Autonomous Knowledge Copilot</p>
+        </div>
+      </div>
+
+      <div class="hud-stats">
+        <div class="stat-pill">
+          <i data-lucide="cpu"></i>
+          <span>Model: <strong>Qwen 3.8 27B</strong></span>
+        </div>
+        <div class="stat-pill">
+          <i data-lucide="database"></i>
+          <span>Vector: <strong>Pinecone KB</strong></span>
+        </div>
+        <div class="stat-pill status-pill" id="health-pill">
+          <span class="status-dot"></span>
+          <span id="health-text">Connecting...</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Content Grid -->
+    <main class="hud-grid">
+      
+      <!-- Left Sidebar: Knowledge Base Ingestion & Controls -->
+      <aside class="hud-panel sidebar-panel tilt-element" data-tilt-max="4">
+        <div class="panel-header">
+          <i data-lucide="hard-drive-upload"></i>
+          <h2>KB Ingestion Portal</h2>
+        </div>
+
+        <p class="panel-desc">
+          Upload private IT policy documents (<code>.pdf</code>, <code>.docx</code>, <code>.md</code>, <code>.txt</code>) directly into the Pinecone namespace.
+        </p>
+
+        <form id="ingest-form" class="ingest-form">
+          <div class="input-group">
+            <label for="admin-key">
+              <i data-lucide="key-round"></i> Admin Security Key
+            </label>
+            <input 
+              type="password" 
+              id="admin-key" 
+              placeholder="Enter x-admin-key (e.g. change-me)" 
+              required 
+            />
+          </div>
+
+          <div class="drop-zone" id="drop-zone">
+            <input type="file" id="file-input" accept=".pdf,.txt,.md,.docx" hidden />
+            <div class="drop-content">
+              <div class="upload-icon-wrap">
+                <i data-lucide="UploadCloud"></i>
+              </div>
+              <span class="drop-title" id="selected-file-name">Drag & drop IT document or click</span>
+              <span class="drop-hint">Chunks: 900 chars | Overlap: 120</span>
+            </div>
+          </div>
+
+          <button type="submit" class="btn-3d btn-ingest" id="ingest-btn">
+            <i data-lucide="zap"></i>
+            <span>Vectorize & Ingest</span>
+          </button>
+
+          <div id="ingest-status" class="ingest-status hidden"></div>
+        </form>
+
+        <div class="divider"></div>
+
+        <!-- Quick Prompts -->
+        <div class="quick-prompts">
+          <h3><i data-lucide="sparkles"></i> Sample IT Queries</h3>
+          <div class="prompt-chips">
+            <button class="chip" data-prompt="How do I reset my corporate VPN password and set up MFA?">
+              VPN & MFA Setup
+            </button>
+            <button class="chip" data-prompt="What is the company policy on installing third-party software on a MacBook?">
+              Software Access Policy
+            </button>
+            <button class="chip" data-prompt="My Outlook email is stuck synchronizing folders on Windows 11. How do I fix it?">
+              Outlook Sync Issue
+            </button>
+            <button class="chip" data-prompt="Hey there! How are you doing today?">
+              Test Direct Router
+            </button>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Center Panel: Holographic Chat Terminal -->
+      <section class="hud-panel chat-panel">
+        <div class="chat-header">
+          <div class="terminal-title">
+            <i data-lucide="terminal"></i>
+            <span>LIVE COPILOT STREAM</span>
+          </div>
+          <button id="clear-chat" class="btn-icon" title="Clear Session">
+            <i data-lucide="trash-2"></i>
+          </button>
+        </div>
+
+        <div class="chat-messages" id="chat-messages">
+          <!-- Welcome Card -->
+          <div class="message assistant-message welcome-card">
+            <div class="avatar-3d">
+              <i data-lucide="bot"></i>
+            </div>
+            <div class="message-body">
+              <div class="message-meta">
+                <span class="sender-name">NEXUS CORE</span>
+                <span class="source-badge badge-direct">SYSTEM READY</span>
+              </div>
+              <div class="message-content">
+                <p>Welcome to the <strong>Enterprise IT Support Agentic RAG Copilot</strong>. Every query you send is dynamically routed through our LangGraph state machine:</p>
+                <ul>
+                  <li><strong>Router Node:</strong> Separates casual conversation from technical IT support requests.</li>
+                  <li><strong>Private KB & Grader:</strong> Queries Pinecone (`all-MiniLM-L6-v2`) and evaluates evidence quality.</li>
+                  <li><strong>Tavily Web Fallback & Query Rewriter:</strong> Automatically searches external vendor docs and rewrites queries up to 3 times if evidence is weak.</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Chat Input Bar -->
+        <form id="chat-form" class="chat-input-area">
+          <div class="input-wrapper">
+            <textarea 
+              id="question-input" 
+              rows="1" 
+              placeholder="Ask an IT support or company policy question... (Shift+Enter for newline)"
+              required
+            ></textarea>
+            <button type="submit" id="send-btn" class="btn-3d btn-send">
+              <i data-lucide="send"></i>
+            </button>
+          </div>
+        </form>
+      </section>
+
+      <!-- Right Sidebar: Live LangGraph Telemetry & Citations -->
+      <aside class="hud-panel telemetry-panel tilt-element" data-tilt-max="4">
+        <div class="panel-header">
+          <i data-lucide="git-branch"></i>
+          <h2>LangGraph Telemetry</h2>
+        </div>
+
+        <!-- Active Query Rewrite Display -->
+        <div class="telemetry-box">
+          <span class="box-label">ACTIVE / REWRITTEN QUERY</span>
+          <div class="query-readout" id="rewritten-query-box">Awaiting query input...</div>
+        </div>
+
+        <!-- Dynamic Pipeline Visualizer -->
+        <div class="pipeline-container">
+          <span class="box-label">EXECUTION TRACE</span>
+          <div id="trace-list" class="trace-timeline">
+            <div class="trace-empty">
+              <i data-lucide="activity"></i>
+              <span>Run a query to inspect real-time agentic routing and evidence grading.</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <!-- Verified Citations -->
+        <div class="citations-container">
+          <div class="panel-header sub-header">
+            <i data-lucide="book-check"></i>
+            <h3>Verified Citations</h3>
+          </div>
+          <div id="citations-list" class="citations-list">
+            <div class="trace-empty">No citations loaded yet.</div>
+          </div>
+        </div>
+      </aside>
+
+    </main>
+  </div>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>
